@@ -151,9 +151,9 @@ security:
     oauth2:
         client:
             client-id: account
-            client-secret: 61aed705-1f70-4955-ad23-94bc15c09c29
+            client-secret: 28fa0a12-3920-421e-81ec-afdd525ceb1a
         resource:
-            user-info-uri: http://dev.servers.divisosofttech.com:8888/auth/realms/graeshoppe/protocol/openid-connect/userinfo
+            user-info-uri: http://dev.servers.divisosofttech.com:8888/auth/realms/ayoos/protocol/openid-connect/userinfo
 
 server:
     servlet:
@@ -210,7 +210,7 @@ jhipster:
 
 application:
 patientDMS:
-# url: http://34.68.17.132:8013/alfresco/api/-default-/public/alfresco/versions/1
+  url: http://34.74.202.141:8081/alfresco/api/-default-/public/alfresco/versions/1
   security:
     basicAuth:
        username: admin   
