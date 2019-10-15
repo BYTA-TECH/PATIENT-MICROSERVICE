@@ -208,3 +208,10 @@ jhipster:
 # ===================================================================
 
 # application:
+application:
+dmsCore:
+  security:
+    basicAuth:
+       username: rafeeq088@gmail.com
+       password: 6glgwuuudd
+
