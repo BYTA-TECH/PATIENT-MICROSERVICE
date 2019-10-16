@@ -39,7 +39,12 @@ public class DMSRecordResource {
     public DMSRecordResource(DMSRecordService dMSRecordService) {
         this.dMSRecordService = dMSRecordService;
     }
-
+    @GetMapping("/dms")
+    public String test() {
+    	return "success";
+    }
+    
+    
     /**
      * POST  /dms-records : Create a new dMSRecord.
      *
