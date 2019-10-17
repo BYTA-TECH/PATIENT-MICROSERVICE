@@ -37,7 +37,7 @@ public class ApiKeyRequestInterceptor implements RequestInterceptor {
     } else if(location.equals("query")) {
       requestTemplate.query(name, value);
     }*/
-		 requestTemplate.header("Authorization", "Basic VElDS0VUXzdhYjNhMWZmMDZhMmMzMThjYzNkMTE3NmM5MDdlM2QwOWFlZGZmYzg=");
+		 requestTemplate.header("Authorization", "Basic bWljcm9zZXJ2aWNlNzAwNEBnbWFpbC5jb206cmkwOTdpY2duNQ==");
 			
   }
 
