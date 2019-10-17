@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import  com.bytatech.ayoos.client.custom_dms_core.api.SitesApi;
 import com.bytatech.ayoos.client.auth_dms.api.AuthenticationApi;
 import com.bytatech.ayoos.client.auth_dms.model.Ticket;
 import com.bytatech.ayoos.client.auth_dms.model.TicketBody;
 import com.bytatech.ayoos.client.auth_dms.model.TicketEntry;
 import com.bytatech.ayoos.client.dms_core.api.PeopleApi;
-import com.bytatech.ayoos.client.dms_core.api.SitesApi;
+//import com.bytatech.ayoos.client.dms_core.api.SitesApi;
 import com.bytatech.ayoos.client.dms_core.model.PersonBodyCreate;
 import com.bytatech.ayoos.client.dms_core.model.PersonEntry;
 import com.bytatech.ayoos.client.dms_core.model.SiteBodyCreate.VisibilityEnum;
@@ -89,10 +89,14 @@ public class CommandResource {
 	
 	@Autowired
 	private  PatientService patientService;
-	@Autowired
-	SitesApi siteApi;
+	/*@Autowired
+	SitesApi siteApi;*/
 	@Autowired
 	PeopleApi peopleApi;
+	@Autowired
+	SitesApi customSiteApi;
+	@Autowired
+	com.bytatech.ayoos.client.dms_core.api.SitesApi siteApi;
 
 	/**
 	 * POST /patients : Create a new patient.
@@ -174,8 +178,15 @@ System.out.println("#################################"+patientDTO.getIdpCode());
 			System.out.println("@@@@@@@@@@@@@@@@@@@@@@"+tic);
 			
 		}
-	
-	
+	@GetMapping("create/{siteId}")
+	public String createSite2(@PathVariable String siteId) {
+		com.bytatech.ayoos.client.custom_dms_core.model.SiteBodyCreate siteBodyCreate = new com.bytatech.ayoos.client.custom_dms_core.model.SiteBodyCreate();
+		siteBodyCreate.setTitle(siteId);
+		siteBodyCreate.setId(siteId);
+		siteBodyCreate.setVisibility(com.bytatech.ayoos.client.custom_dms_core.model.SiteBodyCreate.VisibilityEnum.MODERATED);
+		ResponseEntity<SiteEntry> entry = customSiteApi.createSite(siteBodyCreate, false, false, new ArrayList());
+		return entry.getBody().getEntry().getId();
+	}
 	
 	//@GetMapping("createTicket/{userId}/{password}")
 	/*public void createTicket(@PathVariable String userId,@PathVariable String password) {
