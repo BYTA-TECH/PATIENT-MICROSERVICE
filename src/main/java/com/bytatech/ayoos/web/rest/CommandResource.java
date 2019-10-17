@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-/*
+
 import com.bytatech.ayoos.client.auth_dms.api.AuthenticationApi;
 import com.bytatech.ayoos.client.auth_dms.model.Ticket;
 import com.bytatech.ayoos.client.auth_dms.model.TicketBody;
-import com.bytatech.ayoos.client.auth_dms.model.TicketEntry;*/
+import com.bytatech.ayoos.client.auth_dms.model.TicketEntry;
 import com.bytatech.ayoos.client.dms_core.api.PeopleApi;
 import com.bytatech.ayoos.client.dms_core.api.SitesApi;
 import com.bytatech.ayoos.client.dms_core.model.PersonBodyCreate;
@@ -77,8 +77,8 @@ public class CommandResource {
 
 	/*PeopleApi peopleApi;
 	
-	*//*@Autowired
-	AuthenticationApi authenticationApi;*/
+	*/@Autowired
+	AuthenticationApi authenticationApi;
 	/*@Autowired
 	NodesApi nodesApi;
 	*/
@@ -163,9 +163,9 @@ System.out.println("#################################"+patientDTO.getIdpCode());
 		return siteApi.createSiteMembership(siteId, siteMembershipBodyCreate, null).getBody();
 	}
 
-	/*@GetMapping("createTicket/{userId}/{password}")
+	@GetMapping("createTicket/{userId}/{password}")
 	public void testcreateTicket(@PathVariable String userId,@PathVariable String password) {
-		//	testPerson();
+		
 			TicketBody ticketBody = new TicketBody();
 			ticketBody.setUserId(userId);
 			ticketBody.setPassword(password);
@@ -173,9 +173,7 @@ System.out.println("#################################"+patientDTO.getIdpCode());
 			
 			System.out.println("@@@@@@@@@@@@@@@@@@@@@@"+tic);
 			
-		//	apiKeyRequestInterceptor.setTicket(tic);
-	//		 createNodes("testcustomfolder","ajaysite");
-		}*/
+		}
 	
 	
 	

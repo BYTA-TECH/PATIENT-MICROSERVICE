@@ -214,4 +214,9 @@ dmsCore:
     basicAuth:
        username: microservice7004@gmail.com
        password: ri097icgn5
+authDMS:
+  security:
+    basicAuth:
+       username: microservice7004@gmail.com
+       password: ri097icgn5
 
