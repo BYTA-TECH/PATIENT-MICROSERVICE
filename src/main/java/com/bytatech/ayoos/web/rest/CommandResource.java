@@ -66,7 +66,7 @@ import feign.codec.Encoder;
 
 @RestController
 @RequestMapping("/api/commands")
-//@Import(FeignClientsConfiguration.class)
+
 public class CommandResource {
 
 	private final Logger log = LoggerFactory.getLogger(CommandResource.class);
@@ -145,7 +145,7 @@ System.out.println("#################################"+patientDTO.getIdpCode());
 	 *            the patientDMS-Site to create
 	 *
 	 */
-//@PostMapping("/testsite")
+
 
 	public String createSite(String siteId) {
 		SiteBodyCreate siteBodyCreate = new SiteBodyCreate();
@@ -224,8 +224,17 @@ System.out.println("#################################"+patientDTO.getIdpCode());
 	
 	
 	@PostMapping("/createPeople")
-	public String createPeople(@RequestBody PersonBodyCreate personBodyCreate) {
+	public String createPeople(/*@RequestBody PersonBodyCreate personBodyCreate*/) {
 		System.out.println("+++++++++++++Method Started++++++++++");
+		
+			PersonBodyCreate personBodyCreate = new PersonBodyCreate();
+		personBodyCreate.setId("srss");
+		personBodyCreate.setFirstName("srss");
+	    personBodyCreate.setEmail("srss"+"@gmail.com");
+		personBodyCreate.setPassword("srss");
+		personBodyCreate.setEnabled(true);
+		ResponseEntity<PersonEntry> p=peopleApi.createPerson(personBodyCreate, null);
+		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+p.getBody());
 		System.out.println(peopleApi.createPerson(personBodyCreate, null));
 		System.out.println("+++++++++++++Method Ended++++++++++");
 		return "succes";
