@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.bytatech.ayoos.client.custom_dms_core.ApiKeyRequestInterceptor;
 import  com.bytatech.ayoos.client.custom_dms_core.api.SitesApi;
 import com.bytatech.ayoos.client.auth_dms.api.AuthenticationApi;
 import com.bytatech.ayoos.client.auth_dms.model.Ticket;
@@ -72,8 +74,8 @@ public class CommandResource {
 	private final Logger log = LoggerFactory.getLogger(CommandResource.class);
 
 	private static final String ENTITY_NAME = "Patient";
-	/*@Autowired
-	ApiKeyRequestInterceptor apiKeyRequestInterceptor;*/
+	@Autowired
+	ApiKeyRequestInterceptor apiKeyRequestInterceptor;
 
 	/*PeopleApi peopleApi;
 	
@@ -169,8 +171,8 @@ System.out.println("#################################"+patientDTO.getIdpCode());
 		return siteApi.createSiteMembership(siteId, siteMembershipBodyCreate, null).getBody();
 	}
 
-	@GetMapping("createTicket/{userId}/{password}")
-	public void testcreateTicket(@PathVariable String userId,@PathVariable String password) {
+	//@GetMapping("createTicket/{userId}/{password}")
+	public String testcreateTicket(/*@PathVariable*/ String userId,/*@PathVariable */String password) {
 		
 			TicketBody ticketBody = new TicketBody();
 			ticketBody.setUserId(userId);
@@ -178,7 +180,8 @@ System.out.println("#################################"+patientDTO.getIdpCode());
 			String tic=authenticationApi.createTicket(ticketBody).getBody().getEntry().getId();
 			
 			System.out.println("@@@@@@@@@@@@@@@@@@@@@@"+tic);
-			
+
+			return tic;
 		}
 	@GetMapping("create/{siteId}")
 	public String createSite2(@PathVariable String siteId) {
@@ -205,10 +208,13 @@ System.out.println("#################################"+patientDTO.getIdpCode());
 	}
 
 */	@PostMapping("/createNode/{nodeId}")
-	public String createNodes(@PathVariable String nodeId,/*@RequestBody NodeBodyCreate nodeBodyCreateString name,*/String dmsId ) {
-			  System.out.println("+++++++++++++success++++++++++");
+	public String createNodes(@PathVariable String nodeId/*@RequestBody NodeBodyCreate nodeBodyCreateString name,*//*String dmsId */) {
+	//createPeople();
+	String tic=testcreateTicket("sr23","sr23");
+	apiKeyRequestInterceptor.setTicket(tic);
+	System.out.println("+++++++++++++success++++++++++");
 			  com.bytatech.ayoos.client.custom_dms_core.model.NodeBodyCreate nodeBodyCreate = new com.bytatech.ayoos.client.custom_dms_core.model.NodeBodyCreate();
-				nodeBodyCreate.setName("soorajNayanthara");
+				nodeBodyCreate.setName("soorajNayanth");
 				nodeBodyCreate.setNodeType("cm:content");
 				//nodeBodyCreate.setRelativePath("Sites/"+dmsId);
 
@@ -234,15 +240,15 @@ System.out.println("#################################"+patientDTO.getIdpCode());
 	
 	
 	
-	@PostMapping("/createPeople")
+	//@PostMapping("/createPeople")
 	public String createPeople(/*@RequestBody PersonBodyCreate personBodyCreate*/) {
 		System.out.println("+++++++++++++Method Started++++++++++");
 		
 			PersonBodyCreate personBodyCreate = new PersonBodyCreate();
-		personBodyCreate.setId("sr23");
-		personBodyCreate.setFirstName("sr23");
-	    personBodyCreate.setEmail("sr23"+"@gmail.com");
-		personBodyCreate.setPassword("sr23");
+		personBodyCreate.setId("sr234");
+		personBodyCreate.setFirstName("sr234");
+	    personBodyCreate.setEmail("sr234"+"@gmail.com");
+		personBodyCreate.setPassword("sr234");
 		personBodyCreate.setEnabled(true);
 		ResponseEntity<PersonEntry> p=peopleApi.createPerson(personBodyCreate, null);
 		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+p.getBody());
