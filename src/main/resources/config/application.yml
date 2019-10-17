@@ -219,9 +219,4 @@ authDMS:
     basicAuth:
        username: microservice7004@gmail.com
        password: ri097icgn5
-customDmsCore:
-  security:
-    basicAuth:
-       username: microservice7004@gmail.com
-       password: ri097icgn5
 
