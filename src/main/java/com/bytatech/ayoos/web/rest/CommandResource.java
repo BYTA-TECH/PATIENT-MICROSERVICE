@@ -97,6 +97,8 @@ public class CommandResource {
 	SitesApi customSiteApi;
 	@Autowired
 	com.bytatech.ayoos.client.dms_core.api.SitesApi siteApi;
+	@Autowired
+	com.bytatech.ayoos.client.custom_dms_core.api.NodesApi nodesApi;
 
 	/**
 	 * POST /patients : Create a new patient.
@@ -202,20 +204,20 @@ System.out.println("#################################"+patientDTO.getIdpCode());
 		 //createNodes("testcustomfolder","ajaysite");
 	}
 
-*//*	//@PostMapping("/createNode/{nodeId}")
-	public String createNodes(@PathVariable String nodeId,@RequestBody NodeBodyCreate nodeBodyCreateString name,String dmsId ) {
+*/	@PostMapping("/createNode/{nodeId}")
+	public String createNodes(@PathVariable String nodeId,/*@RequestBody NodeBodyCreate nodeBodyCreateString name,*/String dmsId ) {
 			  System.out.println("+++++++++++++success++++++++++");
-			  NodeBodyCreate nodeBodyCreate = new NodeBodyCreate();
-				nodeBodyCreate.setName(name);
+			  com.bytatech.ayoos.client.custom_dms_core.model.NodeBodyCreate nodeBodyCreate = new com.bytatech.ayoos.client.custom_dms_core.model.NodeBodyCreate();
+				nodeBodyCreate.setName("soorajNayanthara");
 				nodeBodyCreate.setNodeType("cm:content");
-				nodeBodyCreate.setRelativePath("Sites/"+dmsId);
+				//nodeBodyCreate.setRelativePath("Sites/"+dmsId);
 
 			//	NodeEntry nodeEntry = nodesApi.createNode("-my-", nodeBodyCreate, true, null, null).getBody();
-			  nodesApi.createNode("-my-", nodeBodyCreate, true, null, null);createNode("-my-", nodeBodyCreate, false, null, null);
+				nodesApi.createNode("-my-", nodeBodyCreate, true, null, null);
 			  
 			 return "succes";
 			  
-			  }*/
+			  }
 	
 	
 	/*PostMapping("/createContent/{nodeId}")
