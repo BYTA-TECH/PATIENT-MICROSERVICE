@@ -239,10 +239,10 @@ System.out.println("#################################"+patientDTO.getIdpCode());
 		System.out.println("+++++++++++++Method Started++++++++++");
 		
 			PersonBodyCreate personBodyCreate = new PersonBodyCreate();
-		personBodyCreate.setId("sr2");
-		personBodyCreate.setFirstName("sr2");
-	    personBodyCreate.setEmail("sr2"+"@gmail.com");
-		personBodyCreate.setPassword("sr2");
+		personBodyCreate.setId("sr23");
+		personBodyCreate.setFirstName("sr23");
+	    personBodyCreate.setEmail("sr23"+"@gmail.com");
+		personBodyCreate.setPassword("sr23");
 		personBodyCreate.setEnabled(true);
 		ResponseEntity<PersonEntry> p=peopleApi.createPerson(personBodyCreate, null);
 		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+p.getBody());
