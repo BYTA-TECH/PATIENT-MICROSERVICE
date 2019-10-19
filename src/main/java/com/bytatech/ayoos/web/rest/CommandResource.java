@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClientsConfiguration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +20,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bytatech.ayoos.client.custom_dms_core.ApiKeyRequestInterceptor;
-import  com.bytatech.ayoos.client.custom_dms_core.api.SitesApi;
+import com.bytatech.ayoos.client.custom_dms_core.api.SitesApi;
 import com.bytatech.ayoos.client.auth_dms.api.AuthenticationApi;
 import com.bytatech.ayoos.client.auth_dms.model.Ticket;
 import com.bytatech.ayoos.client.auth_dms.model.TicketBody;
@@ -51,8 +53,10 @@ import com.bytatech.ayoos.client.dms.model.SiteMembershipBodyCreate.RoleEnum;*/
 import com.bytatech.ayoos.client.custom_core_dms.api.NodesApi;
 import com.bytatech.ayoos.client.custom_core_dms.model.NodeBodyCreate;*/
 import com.bytatech.ayoos.service.*;
-
+import com.bytatech.ayoos.service.dto.DMSRecordDTO;
+import com.bytatech.ayoos.service.dto.MedicalCaseDTO;
 import com.bytatech.ayoos.service.dto.PatientDTO;
+import com.bytatech.ayoos.service.dto.RecordDTO;
 import com.bytatech.ayoos.web.rest.errors.BadRequestAlertException;
 import com.bytatech.ayoos.web.rest.util.HeaderUtil;
 
@@ -65,6 +69,7 @@ import feign.Feign;
 import feign.auth.BasicAuthRequestInterceptor;
 import feign.codec.Decoder;
 import feign.codec.Encoder;
+import org.springframework.core.io.Resource;
 
 @RestController
 @RequestMapping("/api/commands")
@@ -74,25 +79,32 @@ public class CommandResource {
 	private final Logger log = LoggerFactory.getLogger(CommandResource.class);
 
 	private static final String ENTITY_NAME = "Patient";
+	
+	@Autowired
+	private CommandService commandService;
+	
+	
 	@Autowired
 	ApiKeyRequestInterceptor apiKeyRequestInterceptor;
 
-	/*PeopleApi peopleApi;
-	
-	*/@Autowired
+	/*
+	 * PeopleApi peopleApi;
+	 * 
+	 */@Autowired
 	AuthenticationApi authenticationApi;
-	/*@Autowired
-	NodesApi nodesApi;
-	*/
-	private  String ticket;
+	/*
+	 * @Autowired NodesApi nodesApi;
+	 */
+	private String ticket;
 	private Decoder decoder;
 
 	private Encoder encoder;
-	
+
 	@Autowired
-	private  PatientService patientService;
-	/*@Autowired
-	SitesApi siteApi;*/
+	private PatientService patientService;
+	/*
+	 * @Autowired SitesApi siteApi;
+	 */
 	@Autowired
 	PeopleApi peopleApi;
 	@Autowired
@@ -101,7 +113,13 @@ public class CommandResource {
 	com.bytatech.ayoos.client.dms_core.api.SitesApi siteApi;
 	@Autowired
 	com.bytatech.ayoos.client.custom_dms_core.api.NodesApi nodesApi;
-
+	@Autowired
+	 private  DMSRecordService dMSRecordService;
+	@Autowired
+	private  MedicalCaseService medicalCaseService;
+	@Autowired
+	UserService userService;
+	
 	/**
 	 * POST /patients : Create a new patient.
 	 *
@@ -120,145 +138,82 @@ public class CommandResource {
 		if (patientDTO.getId() != null) {
 			throw new BadRequestAlertException("A new patient cannot already have an ID", ENTITY_NAME, "idexists");
 		}
-		createPersonOnDMS(patientDTO);
+		commandService.createPersonOnDMS(patientDTO);
 
 		String siteId = patientDTO.getIdpCode() + "site";
 
-		String dmsId = createSite(siteId);
+		String dmsId = commandService.createSite(siteId);
 		patientDTO.setDmsId(dmsId);
-		createSiteMembership(dmsId, patientDTO.getIdpCode());
+		commandService.createSiteMembership(dmsId, patientDTO.getIdpCode());
 		PatientDTO result = patientService.save(patientDTO);
 
 		return ResponseEntity.ok().headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, result.getId().toString()))
 				.body(result);
 	}
+
 	
-	public void createPersonOnDMS(PatientDTO patientDTO) {
-		log.debug("=================into the process createPeople()===========");
-System.out.println("#################################"+patientDTO.getIdpCode());
-		PersonBodyCreate personBodyCreate = new PersonBodyCreate();
-		personBodyCreate.setId(patientDTO.getIdpCode());
-		personBodyCreate.setFirstName(patientDTO.getIdpCode());
-	personBodyCreate.setEmail(patientDTO.getIdpCode()+"@gmail.com");
-		personBodyCreate.setPassword(patientDTO.getIdpCode());
-		personBodyCreate.setEnabled(true);
-		ResponseEntity<PersonEntry> p=peopleApi.createPerson(personBodyCreate, null);
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+p.getBody());
-	}
 
-	/**
-	 * Create a new patientDMS-Site.
-	 *
-	 * @param siteId
-	 *            the patientDMS-Site to create
-	 *
-	 */
-
-
-	public String createSite(String siteId) {
-		SiteBodyCreate siteBodyCreate = new SiteBodyCreate();
-		siteBodyCreate.setTitle(siteId);
-		siteBodyCreate.setId(siteId);
-		siteBodyCreate.setVisibility(VisibilityEnum.MODERATED);
-		ResponseEntity<SiteEntry> entry = siteApi.createSite(siteBodyCreate, false, false, new ArrayList());
-		return entry.getBody().getEntry().getId();
-	}
-
-	public SiteMemberEntry createSiteMembership(String siteId, String id) {
-		SiteMembershipBodyCreate siteMembershipBodyCreate = new SiteMembershipBodyCreate();
-		siteMembershipBodyCreate.setRole(RoleEnum.SITEMANAGER);
-		siteMembershipBodyCreate.setId(id);
-		return siteApi.createSiteMembership(siteId, siteMembershipBodyCreate, null).getBody();
-	}
-
-	//@GetMapping("createTicket/{userId}/{password}")
-	public String testcreateTicket(/*@PathVariable*/ String userId,/*@PathVariable */String password) {
-		
-			TicketBody ticketBody = new TicketBody();
-			ticketBody.setUserId(userId);
-			ticketBody.setPassword(password);
-			String tic=authenticationApi.createTicket(ticketBody).getBody().getEntry().getId();
-			
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@"+tic);
-
-			return tic;
-		}
-	@GetMapping("create/{siteId}")
-	public String createSite2(@PathVariable String siteId) {
-		com.bytatech.ayoos.client.custom_dms_core.model.SiteBodyCreate siteBodyCreate = new com.bytatech.ayoos.client.custom_dms_core.model.SiteBodyCreate();
-		siteBodyCreate.setTitle(siteId);
-		siteBodyCreate.setId(siteId);
-		siteBodyCreate.setVisibility(com.bytatech.ayoos.client.custom_dms_core.model.SiteBodyCreate.VisibilityEnum.MODERATED);
-		ResponseEntity<SiteEntry> entry = customSiteApi.createSite(siteBodyCreate, false, false, new ArrayList());
-		return entry.getBody().getEntry().getId();
-	}
 	
-	//@GetMapping("createTicket/{userId}/{password}")
-	/*public void createTicket(@PathVariable String userId,@PathVariable String password) {
-	//	testPerson();
+	
+
+
+
+	@GetMapping("createTicket/{userId}/{password}")
+	public String createTicket(@PathVariable  String userId, @PathVariable String password) {
+
 		TicketBody ticketBody = new TicketBody();
-		ticketBody.setUserId("ajay");
-		ticketBody.setPassword("ajay");
-		String tic=authenticationApi.createTicket(ticketBody).getBody().getEntry().getId();
-		
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@"+tic);
-		
-		commandService.setTicket(tic);
-		 //createNodes("testcustomfolder","ajaysite");
+		ticketBody.setUserId(userId);
+		ticketBody.setPassword(password);
+		String tic = authenticationApi.createTicket(ticketBody).getBody().getEntry().getId();
+		return tic;
 	}
 
-*/	@PostMapping("/createNode/{nodeId}")
-	public String createNodes(@PathVariable String nodeId/*@RequestBody NodeBodyCreate nodeBodyCreateString name,*//*String dmsId */) {
-	//createPeople();
-	String tic=testcreateTicket("sr23","sr23");
-	apiKeyRequestInterceptor.setTicket(tic);
-	System.out.println("+++++++++++++success++++++++++");
-			  com.bytatech.ayoos.client.custom_dms_core.model.NodeBodyCreate nodeBodyCreate = new com.bytatech.ayoos.client.custom_dms_core.model.NodeBodyCreate();
-				nodeBodyCreate.setName("soorajNayanth");
-				nodeBodyCreate.setNodeType("cm:content");
-				//nodeBodyCreate.setRelativePath("Sites/"+dmsId);
+	
+	
 
-			//	NodeEntry nodeEntry = nodesApi.createNode("-my-", nodeBodyCreate, true, null, null).getBody();
-				nodesApi.createNode("-my-", nodeBodyCreate, true, null, null);
-			  
-			 return "succes";
-			  
-			  }
-	
-	
-	/*PostMapping("/createContent/{nodeId}")
-	public String createContent(@PathVariable String nodeId, @RequestBody Resource body) {
-		System.out.println("+++++++++++++success++++++++++" + body);
-		nodesApi.updateNodeContent(nodeId, body, true, null, null, null, null);
-		// nodesApi.updateNode(nodeId, nodeBodyUpdate, null, null);
-		return "succes";
-	}*/
-	@GetMapping("/test1")
-	public String test() {
-		return "success";
-		}
-	
-	
-	
-	//@PostMapping("/createPeople")
-	public String createPeople(/*@RequestBody PersonBodyCreate personBodyCreate*/) {
-		System.out.println("+++++++++++++Method Started++++++++++");
+	  
+    /**
+     * POST  /dms-records : Create a new dMSRecord.
+     *
+     * @param dMSRecordDTO the dMSRecordDTO to create
+     * @return the ResponseEntity with status 201 (Created) and with body the new dMSRecordDTO, or with status 400 (Bad Request) if the dMSRecord has already an ID
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+	 @PostMapping("/dms-records")
+	    public ResponseEntity<DMSRecordDTO> createDMSRecord(@RequestBody RecordDTO recordDTO) throws URISyntaxException {
+		 log.debug("REST request to save DMSRecord : {}", recordDTO); 
+		String prescriptionRef= commandService.addPrescriptionOnDMS(recordDTO.getFile(), recordDTO.getIdpCode());
+		DMSRecordDTO dMSRecordDTO = new DMSRecordDTO();
+		dMSRecordDTO.setMedicalCaseId(recordDTO.getMedicalCaseId());
+		dMSRecordDTO.setPrescriptionRef(prescriptionRef);
 		
-			PersonBodyCreate personBodyCreate = new PersonBodyCreate();
-		personBodyCreate.setId("sr234");
-		personBodyCreate.setFirstName("sr234");
-	    personBodyCreate.setEmail("sr234"+"@gmail.com");
-		personBodyCreate.setPassword("sr234");
-		personBodyCreate.setEnabled(true);
-		ResponseEntity<PersonEntry> p=peopleApi.createPerson(personBodyCreate, null);
-		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"+p.getBody());
-		System.out.println(peopleApi.createPerson(personBodyCreate, null));
-		System.out.println("+++++++++++++Method Ended++++++++++");
-		return "succes";
-	}
-	
-	
-	
-	
+	        if (dMSRecordDTO.getId() != null) {
+	            throw new BadRequestAlertException("A new dMSRecord cannot already have an ID", ENTITY_NAME, "idexists");
+	        }
+	        DMSRecordDTO result = dMSRecordService.save(dMSRecordDTO);
+	        return ResponseEntity.created(new URI("/api/dms-records/" + result.getId()))
+	            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+	            .body(result);
+	    }
+	 
+	  /**
+	     * POST  /medical-cases : Create a new medicalCase.
+	     *
+	     * @param medicalCaseDTO the medicalCaseDTO to create
+	     * @return the ResponseEntity with status 201 (Created) and with body the new medicalCaseDTO, or with status 400 (Bad Request) if the medicalCase has already an ID
+	     * @throws URISyntaxException if the Location URI syntax is incorrect
+	     */
+	    @PostMapping("/medical-cases")
+	    public ResponseEntity<MedicalCaseDTO> createMedicalCase(@RequestBody MedicalCaseDTO medicalCaseDTO) throws URISyntaxException {
+	        log.debug("REST request to save MedicalCase : {}", medicalCaseDTO);
+	        if (medicalCaseDTO.getId() != null) {
+	            throw new BadRequestAlertException("A new medicalCase cannot already have an ID", ENTITY_NAME, "idexists");
+	        }
+	        MedicalCaseDTO result = medicalCaseService.save(medicalCaseDTO);
+	        return ResponseEntity.created(new URI("/api/medical-cases/" + result.getId()))
+	            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+	            .body(result);
+	    }
+	 
 
 }

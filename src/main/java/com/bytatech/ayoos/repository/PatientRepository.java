@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
 @SuppressWarnings("unused")
 @Repository
 public interface PatientRepository extends JpaRepository<Patient, Long> {
-
+Patient findByIdpCode(String idpCode);
 }

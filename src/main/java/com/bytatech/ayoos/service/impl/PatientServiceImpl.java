@@ -109,4 +109,12 @@ public class PatientServiceImpl implements PatientService {
         return patientSearchRepository.search(queryStringQuery(query), pageable)
             .map(patientMapper::toDto);
     }
+
+	@Override
+	public String findDmsIdByIdpCode(String idpCode) {
+		// TODO Auto-generated method stub
+	Patient patient=patientRepository.findByIdpCode(idpCode);
+	return patient.getDmsId();
+	
+	}
 }
