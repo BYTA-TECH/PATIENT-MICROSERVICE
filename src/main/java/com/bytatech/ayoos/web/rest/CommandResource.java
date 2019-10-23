@@ -154,7 +154,7 @@ public class CommandResource {
      * or with status 500 (Internal Server Error) if the patientDTO couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
-    @PutMapping("/patients")
+  /*  @PutMapping("/patients")
     public ResponseEntity<PatientDTO> updatePatient(@RequestBody PatientDTO patientDTO) throws URISyntaxException {
         log.debug("REST request to update Patient : {}", patientDTO);
         if (patientDTO.getId() == null) {
@@ -167,7 +167,7 @@ public class CommandResource {
     }
 
 	
-
+*/
 
 
 	@GetMapping("createTicket/{userId}/{password}")
