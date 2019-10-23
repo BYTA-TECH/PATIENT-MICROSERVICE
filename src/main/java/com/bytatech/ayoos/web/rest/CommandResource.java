@@ -87,14 +87,9 @@ public class CommandResource {
 	@Autowired
 	ApiKeyRequestInterceptor apiKeyRequestInterceptor;
 
-	/*
-	 * PeopleApi peopleApi;
-	 * 
-	 */@Autowired
+	@Autowired
 	AuthenticationApi authenticationApi;
-	/*
-	 * @Autowired NodesApi nodesApi;
-	 */
+	
 	private String ticket;
 	private Decoder decoder;
 
@@ -102,9 +97,6 @@ public class CommandResource {
 
 	@Autowired
 	private PatientService patientService;
-	/*
-	 * @Autowired SitesApi siteApi;
-	 */
 	@Autowired
 	PeopleApi peopleApi;
 	@Autowired
@@ -153,7 +145,27 @@ public class CommandResource {
 
 	
 
-	
+	/**
+     * PUT  /patients : Updates an existing patient.
+     *
+     * @param patientDTO the patientDTO to update
+     * @return the ResponseEntity with status 200 (OK) and with body the updated patientDTO,
+     * or with status 400 (Bad Request) if the patientDTO is not valid,
+     * or with status 500 (Internal Server Error) if the patientDTO couldn't be updated
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PutMapping("/patients")
+    public ResponseEntity<PatientDTO> updatePatient(@RequestBody PatientDTO patientDTO) throws URISyntaxException {
+        log.debug("REST request to update Patient : {}", patientDTO);
+        if (patientDTO.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        PatientDTO result = patientService.save(patientDTO);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, patientDTO.getId().toString()))
+            .body(result);
+    }
+
 	
 
 
