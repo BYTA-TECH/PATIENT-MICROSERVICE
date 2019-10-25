@@ -111,7 +111,10 @@ public class CommandResource {
 	private  MedicalCaseService medicalCaseService;
 	@Autowired
 	UserService userService;
-	
+	@GetMapping("/patients")
+	public String test() {
+		return "success";
+	}
 	/**
 	 * POST /patients : Create a new patient.
 	 *
