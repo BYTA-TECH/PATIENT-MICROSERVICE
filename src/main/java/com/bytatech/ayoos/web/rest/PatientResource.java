@@ -1,12 +1,16 @@
 package com.bytatech.ayoos.web.rest;
+import com.bytatech.ayoos.domain.Patient;
 import com.bytatech.ayoos.service.PatientService;
 import com.bytatech.ayoos.web.rest.errors.BadRequestAlertException;
 import com.bytatech.ayoos.web.rest.util.HeaderUtil;
 import com.bytatech.ayoos.web.rest.util.PaginationUtil;
 import com.bytatech.ayoos.service.dto.PatientDTO;
+import com.bytatech.ayoos.service.mapper.PatientMapper;
+
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +39,9 @@ public class PatientResource {
     private static final String ENTITY_NAME = "patientServicePatient";
 
     private final PatientService patientService;
+
+    @Autowired
+    private PatientMapper patientMapper;
 
     public PatientResource(PatientService patientService) {
         this.patientService = patientService;
@@ -134,6 +141,11 @@ public class PatientResource {
         Page<PatientDTO> page = patientService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/patients");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+    @PostMapping("/patients/modelToDto")
+    public ResponseEntity<PatientDTO> modelToDto(@RequestBody Patient patient) {
+    	 log.debug("REST request to convert to DTO");
+    	return ResponseEntity.ok().body(patientMapper.toDto(patient));
     }
 
 }
