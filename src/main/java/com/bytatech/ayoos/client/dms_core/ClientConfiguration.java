@@ -30,6 +30,8 @@ public class ClientConfiguration {
   @Bean
   @ConditionalOnProperty(name = "dmsCore.security.basicAuth.username")
   public BasicAuthRequestInterceptor basicAuthRequestInterceptor() {
+	  System.out.println("+++++++++++++++++++++"+basicAuthUsername);
+	  System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"+basicAuthPassword);
     return new BasicAuthRequestInterceptor(this.basicAuthUsername, this.basicAuthPassword);
   }
 
