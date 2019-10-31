@@ -212,11 +212,11 @@ application:
 dmsCore:
   security:
     basicAuth:
-       username: microservice7004@gmail.com
-       password: ri097icgn5
+       username: admin
+       password: admin
 authDMS:
   security:
     basicAuth:
-       username: microservice7004@gmail.com
-       password: ri097icgn5
+       username: admin
+       password: admin
 
