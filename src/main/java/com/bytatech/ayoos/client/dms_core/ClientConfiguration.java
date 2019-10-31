@@ -33,7 +33,7 @@ public class ClientConfiguration {
 	  System.out.println("+++++++++++++++++++++"+basicAuthUsername);
 	  System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"+basicAuthPassword);
 	 // BasicAuthRequestInterceptor b= new BasicAuthRequestInterceptor(this.basicAuthUsername, this.basicAuthPassword);
-   return new BasicAuthRequestInterceptor(this.basicAuthUsername, this.basicAuthPassword);
+   return new BasicAuthRequestInterceptor("admin", "admin");
 	  
   }
 
