@@ -17,7 +17,7 @@ import org.springframework.security.oauth2.client.token.grant.implicit.ImplicitR
 import org.springframework.security.oauth2.client.token.grant.password.ResourceOwnerPasswordResourceDetails;
 
 @Configuration
-@ExcludeFromComponentScan
+//@ExcludeFromComponentScan
 @EnableConfigurationProperties
 public class ClientConfiguration {
 
@@ -32,7 +32,10 @@ public class ClientConfiguration {
   public BasicAuthRequestInterceptor basicAuthRequestInterceptor() {
 	  System.out.println("+++++++++++++++++++++"+basicAuthUsername);
 	  System.out.println("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"+basicAuthPassword);
-    return new BasicAuthRequestInterceptor(this.basicAuthUsername, this.basicAuthPassword);
+	  BasicAuthRequestInterceptor b= new BasicAuthRequestInterceptor(this.basicAuthUsername, this.basicAuthPassword);
+  /*  return new BasicAuthRequestInterceptor(this.basicAuthUsername, this.basicAuthPassword);*/
+
+	  return b;
   }
 
 }

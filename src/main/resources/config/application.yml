@@ -208,7 +208,6 @@ jhipster:
 # ===================================================================
 
 # application:
-application:
 dmsCore:
   security:
     basicAuth:
