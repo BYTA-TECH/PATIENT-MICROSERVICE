@@ -151,7 +151,7 @@ security:
     oauth2:
         client:
             client-id: account
-            client-secret: 7f8a027d-36dd-48fa-b09b-b26762029aa1
+            client-secret: 95059ed8-aece-4462-87b5-63c6e9c4a2dc
         resource:
             user-info-uri: http://dev.servers.divisosofttech.com:8888/auth/realms/Ayoos/protocol/openid-connect/userinfo
 server:
