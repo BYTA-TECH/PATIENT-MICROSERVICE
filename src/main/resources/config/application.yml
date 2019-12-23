@@ -151,9 +151,9 @@ security:
     oauth2:
         client:
             client-id: account
-            client-secret: 95059ed8-aece-4462-87b5-63c6e9c4a2dc
+            client-secret: d4f03412-cdad-45b0-9ccc-beddd8399ac5
         resource:
-            user-info-uri: http://dev.servers.divisosofttech.com:8888/auth/realms/Ayoos/protocol/openid-connect/userinfo
+            user-info-uri: https://dev.servers.divisosofttech.com/auth/realms/graeshoppe/protocol/openid-connect/userinfo
 server:
     servlet:
         session:
